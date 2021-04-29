@@ -1,8 +1,8 @@
 import React from 'react'
-import { View, Text } from 'react-native'
 
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
+import MapScreen from '../screens/MapScreen';
+import PermissionsScreen from '../screens/PermissionsScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,7 +16,8 @@ const StackNavigator = () => {
                 }
             }}
         >
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            <Stack.Screen name="MapScreen" component={MapScreen} />
+            <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} />
         </Stack.Navigator>
     )
 }
