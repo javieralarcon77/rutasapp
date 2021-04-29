@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { AppState, Platform } from 'react-native'
-import { check, request, PermissionStatus, PERMISSIONS } from 'react-native-permissions'
+import { check, request, PermissionStatus, PERMISSIONS, openSettings } from 'react-native-permissions'
 
 //propiedades que expone
 export interface PermissionsState{
@@ -43,6 +43,12 @@ export const PermissionsProvider = ({children}:any) => {
         }else{
             permisionStatus = await request( PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION );
         }
+
+        if( permisionStatus === 'blocked' ){
+            openSettings();
+        }
+
+
         setPermissions({
             ...permissions,
             locationStatus: permisionStatus
