@@ -33,6 +33,7 @@ export const PermissionsProvider = ({children}:any) => {
     }
 
     useEffect(() => {
+        _eventCheckState('active');
         AppState.addEventListener('change', _eventCheckState)
         return () => {
             //AppState.removeEventListener('change',_eventCheckState)

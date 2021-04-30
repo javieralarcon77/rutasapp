@@ -1,7 +1,11 @@
 import React from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
 
-const LoadingScreen = () => {
+interface Props{
+    title?:string;
+}
+
+const LoadingScreen = ({ title = "Cargando..." }:Props) => {
     return (
         <View style={{ 
             flex:1,
@@ -17,7 +21,7 @@ const LoadingScreen = () => {
                 style={{
                     fontSize: 20,
                 }}
-            >Loading Screen</Text>
+            >{ title }</Text>
         </View>
     )
 }
