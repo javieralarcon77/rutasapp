@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Geolocation, { GeolocationResponse } from '@react-native-community/geolocation';
 
 interface Location{
@@ -14,13 +14,21 @@ export const useLocation = () => {
         latitude: 0,
     });
 
-    const _setPostionUser = ({ latitude, longitude }:Location) => {
-        setInitialPosition({
-            latitude: latitude,
-            longitude: longitude
-        })
-        setHasLocation(true);
-    }
+    const [userLocation, setUserLocation] = useState<Location>({
+        longitude: 0,
+        latitude: 0,
+    });
+
+    const watchId = useRef<number>();
+
+    useEffect(()=>{
+        getCurrenLocation()
+            .then( location => {
+                setInitialPosition(location)
+                setHasLocation(true);
+                setUserLocation( location );
+            })
+    },[]);
 
     const getCurrenLocation = () => {
         return new Promise<Location>((resolve, reject)=>{
@@ -39,16 +47,34 @@ export const useLocation = () => {
         });
     }
 
-    useEffect(()=>{
-        getCurrenLocation()
-            .then( location => {
-                _setPostionUser( location );
-            })
-    },[]);
+    const followUserLocation = () => {
+        
+        watchId.current = Geolocation.watchPosition(
+            ({ coords }) => {
+                setUserLocation( {
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                });
+            },
+            err => console.log( err ),
+            {
+                enableHighAccuracy: true,
+                distanceFilter: 10,
+            }
+        );
+    }    
+
+    const stopFollowUser = () => {
+        if(watchId.current)
+            Geolocation.clearWatch( watchId.current );
+    }
 
     return {
         hasLocation,
         initialPosition,
+        userLocation,
         getCurrenLocation,
+        followUserLocation,
+        stopFollowUser,
     }
 }

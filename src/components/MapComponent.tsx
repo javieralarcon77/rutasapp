@@ -17,13 +17,43 @@ interface Props{
 
 const MapComponent = ({ markers = [] }:Props) => {
 
-    const { initialPosition, hasLocation, getCurrenLocation } = useLocation();
+    const { 
+        userLocation, 
+        initialPosition, 
+        hasLocation, 
+        getCurrenLocation, 
+        followUserLocation,
+        stopFollowUser,
+    } = useLocation();
+
+    //tiene la referencia del mapview
     const mapRef = useRef<MapView>();
 
+    //variable para saber si la camara sigue al usuario
+    const following = useRef(true);
+
+    useEffect(()=>{
+        //inicia el seguimiento
+        followUserLocation()
+        return () => { //cancelar el seguimiento al desmontar el componente
+            stopFollowUser();
+        }
+    },[])
+
+    //mover el mapa a la nueva ubicacion
+    useEffect(()=>{
+        if( !following.current ) //si no se desea seguir se cancela la operacion
+            return;
+
+        mapRef.current?.animateCamera({
+            center: userLocation,
+        })
+    },[ userLocation ])
+
     const centerPosition = async () => {
-
         const location = await getCurrenLocation();
-
+       
+        following.current = true;
         mapRef.current?.animateCamera({
             center: location
         })
@@ -44,7 +74,7 @@ const MapComponent = ({ markers = [] }:Props) => {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-                
+                onTouchStart={ ()=>{ following.current = false; } }
             >
                 {/* marcadores dinamicos */}
                 {
