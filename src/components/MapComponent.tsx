@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import MapView, { Marker } from 'react-native-maps';
 import { useLocation } from '../hooks/useLocation';
 import LoadingScreen from '../screens/LoadingScreen';
+import Fab from './Fab';
 
 interface Marcador{
     lat: number,
@@ -16,7 +17,17 @@ interface Props{
 
 const MapComponent = ({ markers = [] }:Props) => {
 
-    const { initialPosition, hasLocation } = useLocation();
+    const { initialPosition, hasLocation, getCurrenLocation } = useLocation();
+    const mapRef = useRef<MapView>();
+
+    const centerPosition = async () => {
+
+        const location = await getCurrenLocation();
+
+        mapRef.current?.animateCamera({
+            center: location
+        })
+    }
 
     if(!hasLocation)
         return <LoadingScreen title="Obteniendo Coordenadas"/>
@@ -24,6 +35,7 @@ const MapComponent = ({ markers = [] }:Props) => {
     return (
         <>
             <MapView
+                ref={ (el)=> mapRef.current = el! }
                 style={{ flex: 1 }}
                 showsUserLocation
                 initialRegion={{
@@ -32,6 +44,7 @@ const MapComponent = ({ markers = [] }:Props) => {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
+                
             >
                 {/* marcadores dinamicos */}
                 {
@@ -51,6 +64,15 @@ const MapComponent = ({ markers = [] }:Props) => {
                 }
                 {/**/}
             </MapView>
+            <Fab
+                iconName="compass-outline"
+                onPress={ ()=> centerPosition() }
+                style={{
+                    position:'absolute',
+                    bottom: 10,
+                    right:10,
+                }}
+            />
         </>
     )
 }
