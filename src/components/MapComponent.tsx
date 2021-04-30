@@ -17,6 +17,8 @@ interface Props{
 
 const MapComponent = ({ markers = [] }:Props) => {
 
+    const [showPolyline, setShowPolyline] = useState(true);
+
     const { 
         userLocation, 
         initialPosition, 
@@ -94,11 +96,14 @@ const MapComponent = ({ markers = [] }:Props) => {
                     } )
                 }
                 {/* polyline */}
-                <Polyline
-                    coordinates={ routeLines }
-                    strokeColor="black"
-                    strokeWidth={ 3 }
-                />
+                {
+                    showPolyline &&
+                    <Polyline
+                        coordinates={ routeLines }
+                        strokeColor="black"
+                        strokeWidth={ 3 }
+                    />
+                }
             </MapView>
             <Fab
                 iconName="compass-outline"
@@ -106,6 +111,16 @@ const MapComponent = ({ markers = [] }:Props) => {
                 style={{
                     position:'absolute',
                     bottom: 10,
+                    right:10,
+                }}
+            />
+
+            <Fab
+                iconName="brush-outline"
+                onPress={ ()=> setShowPolyline( value => !value ) }
+                style={{
+                    position:'absolute',
+                    bottom: 80,
                     right:10,
                 }}
             />
