@@ -14,26 +14,41 @@ export const useLocation = () => {
         latitude: 0,
     });
 
-    const _setPostionUser = ({ coords }:GeolocationResponse) => {
+    const _setPostionUser = ({ latitude, longitude }:Location) => {
         setInitialPosition({
-            latitude: coords.latitude,
-            longitude: coords.longitude
+            latitude: latitude,
+            longitude: longitude
         })
         setHasLocation(true);
     }
 
+    const getCurrenLocation = () => {
+        return new Promise<Location>((resolve, reject)=>{
+            Geolocation.getCurrentPosition(
+                ({ coords }) => {
+                    resolve( {
+                        latitude: coords.latitude,
+                        longitude: coords.longitude
+                    } );
+                },
+                err => reject( err ),
+                {
+                    enableHighAccuracy: true
+                }
+            );
+        });
+    }
+
     useEffect(()=>{
-        Geolocation.getCurrentPosition(
-            info =>_setPostionUser(info),
-            err => console.log(err),
-            {
-                enableHighAccuracy: true
-            }
-        );
+        getCurrenLocation()
+            .then( location => {
+                _setPostionUser( location );
+            })
     },[]);
 
     return {
         hasLocation,
         initialPosition,
+        getCurrenLocation,
     }
 }
