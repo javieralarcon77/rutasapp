@@ -9,6 +9,9 @@ interface Location{
 export const useLocation = () => {
     
     const [hasLocation, setHasLocation] = useState(false);
+
+    const [ routeLines, setRouteLines] = useState<Location[]>([])
+
     const [initialPosition, setInitialPosition] = useState<Location>({
         longitude: 0,
         latitude: 0,
@@ -27,6 +30,8 @@ export const useLocation = () => {
                 setInitialPosition(location)
                 setHasLocation(true);
                 setUserLocation( location );
+
+                setRouteLines((routes) => [ ...routes, location ]);
             })
     },[]);
 
@@ -51,10 +56,13 @@ export const useLocation = () => {
         
         watchId.current = Geolocation.watchPosition(
             ({ coords }) => {
-                setUserLocation( {
+                let location = {
                     latitude: coords.latitude,
-                    longitude: coords.longitude,
-                });
+                    longitude: coords.longitude
+                }
+                setUserLocation( location );
+                setRouteLines((routes) => [ ...routes, location ]);
+                
             },
             err => console.log( err ),
             {
@@ -73,6 +81,7 @@ export const useLocation = () => {
         hasLocation,
         initialPosition,
         userLocation,
+        routeLines,
         getCurrenLocation,
         followUserLocation,
         stopFollowUser,
