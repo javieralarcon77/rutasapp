@@ -9,6 +9,22 @@ Ejecutar npm para instalar las dependendencias
 ```bash
     npm install
 ```
+## NECESARIO
+
+Para ejecutar el programa es necesario crear una apikey de google maps api con permisos para 
+api maps android e api maps ios si se desea correr en ambas plataformas.
+
+El api key se debe agregar en /android/app/src/main/AndroidManifest.xml
+
+```xml
+    ...
+
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="API_KEY"/>
+
+    ....
+```
 
 ## Correr en el emulador
 
